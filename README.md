@@ -1,6 +1,6 @@
 <div style="display: flex; justify-content: center; align-items: center; gap: 20px; margin-bottom: 60px;">
-  <img src="./examples/INPUT.png" alt="INPUT" style="width: 50%;">
-  <img src="./examples/OUTPUT.png" alt="OUTPUT" style="width: 50%;">
+  <img src="./examples/INPUT.png" alt="INPUT" style="width: 45%;">
+  <img src="./examples/OUTPUT.png" alt="OUTPUT" style="width: 45%;">
 </div>
 
 # Kugelblick – Inverse Sphere Distortion
