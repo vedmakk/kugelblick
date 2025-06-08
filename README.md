@@ -1,3 +1,8 @@
+<div style="display: flex; justify-content: center; align-items: center; gap: 20px; margin-bottom: 60px;">
+  <img src="./examples/INPUT.png" alt="INPUT" style="width: 50%;">
+  <img src="./examples/OUTPUT.png" alt="OUTPUT" style="width: 50%;">
+</div>
+
 # Kugelblick – Inverse Sphere Distortion
 
 Kugelblick is a small toolset for distorting graphics in such a way that they appear undistorted when viewed through a transparent glass sphere.
@@ -11,6 +16,9 @@ This project includes two scripts:
 
 - `distort.py` – generates the pre-distorted (inverse) image.
 - `calibration.py` – estimates refractive index and sphere distance from a calibration photo (checkerboard pattern).
+
+> [!Note]
+> This project was fully written with OpenAI `codex` (using the `o3` model).
 
 ## Installation
 
@@ -63,8 +71,9 @@ Everything outside the sphere radius remains unchanged — so you can place text
 If the refractive index or distance are not precisely known, you can estimate them from a photo of a checkerboard pattern.
 
 ```bash
+# For a 5x5 squares checkerboard with 4x4 inner corners:
 python calibration.py PHOTO.png \
-    --pattern_cols 7 --pattern_rows 7 \
+    --pattern_cols 4 --pattern_rows 4 \
     --square_size_mm 5.0 \
     --sphere_diameter_mm 10.0
 ```
