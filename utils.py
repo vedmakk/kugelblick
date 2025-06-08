@@ -124,7 +124,23 @@ def generate_radial_mapping(
     # --- Refraction: sphere -> air ----------------------------------------
     eta_exit = n_sph / n_air  # >1
 
-    cos_i2 = -np.einsum("ij,ij->i", N2, T1)
+    # Note: For the *second* refraction (sphere → air) the incident ray *T1*
+    # is already **inside** the sphere.  The outward surface normal *N2* thus
+    # points *into the same general direction* as the incident ray for all
+    # rays that actually exit through the lower hemisphere.
+    #
+    # Using the same convention as above (cos_i = -dot(N, I)) would therefore
+    # yield a *negative* cos_i for these rays.  While mathematically valid,
+    # the ensuing formula
+    #
+    #   T = eta * I + (eta * cos_i - cos_t) * N
+    #
+    # would flip the sign of the transmitted direction and send the ray
+    # *upwards* again – clearly wrong.  Instead we compute the cosine of the
+    # incident angle directly via ``dot(N, I)`` which is **positive** in the
+    # typical exit scenario and keeps the transmitted ray heading downwards
+    # towards the print plane.
+    cos_i2 = np.einsum("ij,ij->i", N2, T1)  # no leading minus sign here!
     cos_i2 = np.clip(cos_i2, -1.0, 1.0)
     sin2_t2 = eta_exit**2 * (1.0 - cos_i2**2)
 
@@ -153,7 +169,12 @@ def generate_radial_mapping(
 
     # Store results where everything was valid (no TIR, ray intersects plane
     # in front of the sphere, etc.).
-    ok = (~tir_mask) & np.isfinite(s_plane) & (s_plane > 0)
+    # A parametric distance ``s_plane`` of **zero** corresponds to rays that
+    # leave the sphere exactly at the point where it touches the print plane
+    # (i.e. for *gap_px == 0* and *r_obs == 0*).  These rays are perfectly
+    # valid and should be included in the mapping.  Therefore we also accept
+    # *s_plane == 0* here.
+    ok = (~tir_mask) & np.isfinite(s_plane) & (s_plane >= 0)
     r_plane[ok] = r_plane_computed[ok]
 
     # For invalid rays (mostly those beyond the critical angle) we simply keep
